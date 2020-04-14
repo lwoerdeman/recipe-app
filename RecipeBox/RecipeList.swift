@@ -9,17 +9,42 @@
 import SwiftUI
 
 struct RecipeList: View {
-    var recipes = [Recipe(id: 0, name: "Chicken Caprese", createdDate: Date(), isFavorite: true, imageName: "chicken_caprese")]
+    static var id = 0;
+    @State var recipes: [Recipe] = []
     
     var body: some View {
         NavigationView {
-            List(recipes) {recipe in
-                NavigationLink(destination: RecipeDetail(recipe: recipe)) {
-                    RecipeRow(recipe: recipe)
+            List{
+                ForEach(recipes) {recipe in
+                    NavigationLink(destination: RecipeDetail(recipe: recipe)) {
+                        RecipeRow(recipe: recipe)
+                    }
                 }
+                .onDelete(perform: onDelete)
+                .onMove(perform: onMove)
             }
             .navigationBarTitle(Text("Recipes"))
+            .navigationBarItems(
+                leading: EditButton(),
+                trailing: Button(action: {
+                self.addRecipe()
+            }) {
+                Image(systemName: "plus")
+            })
         }
+    }
+    
+    private func addRecipe() {
+        recipes.append(Recipe(id: RecipeList.id, name: String(format: "Chicken Caprese: %d", RecipeList.id), createdDate: Date(), isFavorite: true, imageName: "chicken_caprese"))
+        RecipeList.id += 1
+    }
+    
+    private func onDelete(offsets: IndexSet) {
+        recipes.remove(atOffsets: offsets)
+    }
+    
+    private func onMove(source: IndexSet, destination: Int) {
+        recipes.move(fromOffsets: source, toOffset: destination)
     }
 }
 
