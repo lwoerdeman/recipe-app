@@ -18,5 +18,9 @@
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Use the camera to take photos of your food</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Select a photo of your food</string>
 </dict>
 </plist>
