@@ -37,6 +37,7 @@ struct RecipeDetail: View {
             Text("Notes").font(.headline).padding(.leading)
             Spacer()
         }
+        .navigationBarTitle(Text(recipe.name), displayMode: .inline)
     }
 }
 

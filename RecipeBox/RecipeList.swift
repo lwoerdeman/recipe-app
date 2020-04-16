@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct RecipeList: View {
-    static var id = 0;
+    @State var id = 0;
     @State var recipes: [Recipe] = []
     
     var body: some View {
@@ -26,17 +26,10 @@ struct RecipeList: View {
             .navigationBarTitle(Text("Recipes"))
             .navigationBarItems(
                 leading: EditButton(),
-                trailing: Button(action: {
-                self.addRecipe()
-            }) {
-                Image(systemName: "plus")
-            })
+                trailing: NavigationLink(destination: RecipeForm(recipes: $recipes, id: $id)) {
+                        Image(systemName: "plus")
+                    })
         }
-    }
-    
-    private func addRecipe() {
-        recipes.append(Recipe(id: RecipeList.id, name: String(format: "Chicken Caprese: %d", RecipeList.id), createdDate: Date(), isFavorite: true, imageName: "chicken_caprese"))
-        RecipeList.id += 1
     }
     
     private func onDelete(offsets: IndexSet) {
