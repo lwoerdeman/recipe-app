@@ -9,6 +9,8 @@
 import Foundation
 import SwiftUI
 
+let persistence = PersistenceHelper()
+
 struct Recipe: Hashable, Codable, Identifiable {
     let id: Int
     var name: String
@@ -19,25 +21,9 @@ struct Recipe: Hashable, Codable, Identifiable {
 
 extension Recipe {
     var image: Image {
-        if let image = load(fileName: imageName) {
+        if let image = persistence.loadPhoto(imageName) {
             return Image(uiImage: image)
         }
         return Image(imageName)
-    }
-    
-    private func load(fileName: String) -> UIImage? {
-        let fileURL = getDocumentsDirectory().appendingPathComponent(fileName)
-        do {
-            let imageData = try Data(contentsOf: fileURL)
-            return UIImage(data: imageData)
-        } catch {
-            print("Error loading image : \(error)")
-        }
-        return nil
-    }
-    
-    func getDocumentsDirectory() -> URL {
-        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-        return paths[0]
     }
 }

@@ -19,6 +19,8 @@ struct RecipeForm: View {
     @State private var showCaptureImageView: Bool = false
     @State var uiImage: UIImage? = nil
     
+    private let persistence = PersistenceHelper()
+    
     @Environment(\.presentationMode) var mode: Binding<PresentationMode>
     var body: some View {
         ZStack {
@@ -44,7 +46,7 @@ struct RecipeForm: View {
                 }
                 Section {
                     Button(action: {
-                        if let filename = self.savePhoto(self.uiImage) {
+                        if let filename = self.persistence.savePhoto(self.uiImage) {
                             self.imageName = filename }
                         else {
                             self.imageName = "chicken_caprese"
@@ -63,24 +65,6 @@ struct RecipeForm: View {
                 CaptureImageView(uiImage: $uiImage, isShown: $showCaptureImageView)
             }
         }
-    }
-    
-    func savePhoto(_ uiImage: UIImage?) -> String? {
-        let filename = UUID().uuidString
-        
-        if let image = uiImage {
-            if let data = image.pngData() {
-                let filepath = getDocumentsDirectory().appendingPathComponent(filename)
-                try? data.write(to: filepath)
-                return filename
-            }
-        }
-        return nil
-    }
-    
-    func getDocumentsDirectory() -> URL {
-        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-        return paths[0]
     }
 }
 
