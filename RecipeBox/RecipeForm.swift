@@ -16,6 +16,8 @@ struct RecipeForm: View {
     @State private var dateMade = Date()
     @State private var isFavorite = false
     @State private var imageName = "chicken_caprese"
+    @State private var showCaptureImageView: Bool = false
+    @State var uiImage: UIImage? = nil
     
     @Environment(\.presentationMode) var mode: Binding<PresentationMode>
     var body: some View {
@@ -28,6 +30,12 @@ struct RecipeForm: View {
                         Text("Favorite?")
                     }
                 }
+                Section(header: Text("Recipe Picture")) {
+                    NavigationLink(destination: CaptureImageView(uiImage: $uiImage, isShown: $showCaptureImageView),
+                                   isActive: $showCaptureImageView) {
+                        Text("Add Photo")
+                    }
+                }
                 Section {
                     Button(action: {
                         self.recipes.append(Recipe(id: self.id, name: self.name, createdDate: self.dateMade, isFavorite: self.isFavorite, imageName: self.imageName))
@@ -36,11 +44,22 @@ struct RecipeForm: View {
                     }) {
                         Text("Add Recipe")
                     }
+                    uiImage.map {
+                        Image(uiImage: $0).resizable()
+                            .frame(width: 250, height: 200)
+                            .clipShape(Circle())
+                            .overlay(Circle().stroke(Color.white, lineWidth: 4))
+                            .shadow(radius: 10)
+                    }
                 }
-                .disabled(self.name.isEmpty)
+                .disabled(self.name.isEmpty || self.imageName.isEmpty)
             }
             .navigationBarTitle(Text("Registration Form"))
         }
+    }
+    
+    func takePhoto() {
+        
     }
 }
 
