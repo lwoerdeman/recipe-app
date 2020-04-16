@@ -19,6 +19,25 @@ struct Recipe: Hashable, Codable, Identifiable {
 
 extension Recipe {
     var image: Image {
-        Image(imageName)
+        if let image = load(fileName: imageName) {
+            return Image(uiImage: image)
+        }
+        return Image(imageName)
+    }
+    
+    private func load(fileName: String) -> UIImage? {
+        let fileURL = getDocumentsDirectory().appendingPathComponent(fileName)
+        do {
+            let imageData = try Data(contentsOf: fileURL)
+            return UIImage(data: imageData)
+        } catch {
+            print("Error loading image : \(error)")
+        }
+        return nil
+    }
+    
+    func getDocumentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return paths[0]
     }
 }
