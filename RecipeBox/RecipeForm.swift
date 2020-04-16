@@ -21,40 +21,44 @@ struct RecipeForm: View {
     
     @Environment(\.presentationMode) var mode: Binding<PresentationMode>
     var body: some View {
-        NavigationView {
-            Form {
-                Section(header: Text("Recipe Info")) {
-                    TextField("Recipe Name", text: $name)
-                    DatePicker("Date Made", selection: $dateMade, in: ...Date(), displayedComponents: .date)
-                    Toggle(isOn: $isFavorite) {
-                        Text("Favorite?")
+        ZStack {
+            NavigationView {
+                Form {
+                    Section(header: Text("Recipe Info")) {
+                        TextField("Recipe Name", text: $name)
+                        DatePicker("Date Made", selection: $dateMade, in: ...Date(), displayedComponents: .date)
+                        Toggle(isOn: $isFavorite) {
+                            Text("Favorite?")
+                        }
                     }
+                    Section(header: Text("Recipe Picture")) {
+                        Button(action: {
+                            self.showCaptureImageView.toggle()
+                        }) {
+                            Text("Add photo")
+                        }
+                        uiImage.map {
+                            Image(uiImage: $0)
+                                .resizable()
+                            .scaledToFit()
+                        }
+                    }
+                    Section {
+                        Button(action: {
+                            self.recipes.append(Recipe(id: self.id, name: self.name, createdDate: self.dateMade, isFavorite: self.isFavorite, imageName: self.imageName))
+                            self.id += 1
+                            self.mode.wrappedValue.dismiss()
+                        }) {
+                            Text("Add Recipe")
+                        }
+                    }
+                    .disabled(self.name.isEmpty || self.imageName.isEmpty)
                 }
-                Section(header: Text("Recipe Picture")) {
-                    NavigationLink(destination: CaptureImageView(uiImage: $uiImage, isShown: $showCaptureImageView),
-                                   isActive: $showCaptureImageView) {
-                        Text("Add Photo")
-                    }
-                }
-                Section {
-                    Button(action: {
-                        self.recipes.append(Recipe(id: self.id, name: self.name, createdDate: self.dateMade, isFavorite: self.isFavorite, imageName: self.imageName))
-                        self.id += 1
-                        self.mode.wrappedValue.dismiss()
-                    }) {
-                        Text("Add Recipe")
-                    }
-                    uiImage.map {
-                        Image(uiImage: $0).resizable()
-                            .frame(width: 250, height: 200)
-                            .clipShape(Circle())
-                            .overlay(Circle().stroke(Color.white, lineWidth: 4))
-                            .shadow(radius: 10)
-                    }
-                }
-                .disabled(self.name.isEmpty || self.imageName.isEmpty)
+                .navigationBarTitle(Text("Registration Form"))
             }
-            .navigationBarTitle(Text("Registration Form"))
+            if (showCaptureImageView) {
+                CaptureImageView(uiImage: $uiImage, isShown: $showCaptureImageView)
+            }
         }
     }
     
