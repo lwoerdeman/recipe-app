@@ -9,13 +9,12 @@
 import SwiftUI
 
 struct RecipeList: View {
-    @State var id = 0;
-    @State var recipes: [Recipe] = []
+    @ObservedObject var recipesVM = RecipesViewModel()
     
     var body: some View {
         NavigationView {
             List{
-                ForEach(recipes) {recipe in
+                ForEach(recipesVM.recipes) {recipe in
                     NavigationLink(destination: RecipeDetail(recipe: recipe)) {
                         RecipeRow(recipe: recipe)
                     }
@@ -26,18 +25,18 @@ struct RecipeList: View {
             .navigationBarTitle(Text("Recipes"))
             .navigationBarItems(
                 leading: EditButton(),
-                trailing: NavigationLink(destination: RecipeForm(recipes: $recipes, id: $id)) {
+                trailing: NavigationLink(destination: RecipeForm(recipes: $recipesVM.recipes, id: $recipesVM.recipeIndex)) {
                         Image(systemName: "plus")
                     })
         }
     }
     
     private func onDelete(offsets: IndexSet) {
-        recipes.remove(atOffsets: offsets)
+        recipesVM.recipes.remove(atOffsets: offsets)
     }
     
     private func onMove(source: IndexSet, destination: Int) {
-        recipes.move(fromOffsets: source, toOffset: destination)
+        recipesVM.recipes.move(fromOffsets: source, toOffset: destination)
     }
 }
 

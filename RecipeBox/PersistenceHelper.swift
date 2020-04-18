@@ -10,12 +10,6 @@ import Foundation
 import UIKit
 
 struct PersistenceHelper {
-    private let encoder = JSONEncoder()
-    private let decoder = JSONDecoder()
-    private let defaults = UserDefaults.standard
-    private let recipesKey = "SavedRecipes"
-    private let indexKey = "SavedIndex"
-
     func savePhoto(_ uiImage: UIImage?) -> String? {
         let filename = UUID().uuidString
         
@@ -38,29 +32,6 @@ struct PersistenceHelper {
             print("Error loading image : \(error)")
         }
         return nil
-    }
-    
-    func saveRecipes(recipes: [Recipe]) {
-        if let encoded = try? encoder.encode(recipes) {
-            self.defaults.set(encoded, forKey: self.recipesKey)
-        }
-    }
-    
-    func saveIndex(index: Int) {
-        self.defaults.set(index, forKey: self.indexKey)
-    }
-    
-    func loadIndex() -> Int{
-        return self.defaults.integer(forKey: self.indexKey)
-    }
-    
-    func loadRecipes() -> [Recipe] {
-        if let savedRecipes = defaults.object(forKey: self.recipesKey) as? Data {
-            if let loadedRecipes = try? decoder.decode([Recipe].self, from: savedRecipes) {
-                return loadedRecipes
-            }
-        }
-        return []
     }
     
     private func getDocumentsDirectory() -> URL {
